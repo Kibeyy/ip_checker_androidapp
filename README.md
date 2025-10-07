@@ -24,7 +24,7 @@ A simple Android app built with **Jetpack Compose**, **Retrofit**, and **ViewMod
 ## 📸 Screenshot
 _Add your app screenshot below:_
 
-![App Screenshot](screenshot.png)
+![App Screenshot](images/img.png)
 
 ---
 
