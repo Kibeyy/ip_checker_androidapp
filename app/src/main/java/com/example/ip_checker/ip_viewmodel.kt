@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 
 sealed class states {
     object Loading : states()
+    object Home: states()
     class Success(val ip:ip_model) : states()
     class Error (val message:String) : states()
 
@@ -18,11 +19,11 @@ sealed class states {
 class ip_viewmodel: ViewModel() {
     private val repo = ip_repository()
 
-    private var internalState: MutableState<states> = mutableStateOf(states.Loading)
+    private var internalState: MutableState<states> = mutableStateOf(states.Home)
     val state: MutableState<states> = internalState
-    init {
-        get_ip()
-    }
+//    init {
+//        get_ip()
+//    }
 
     fun get_ip(){
         viewModelScope.launch {

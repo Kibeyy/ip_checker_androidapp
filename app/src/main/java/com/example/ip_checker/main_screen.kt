@@ -1,75 +1,87 @@
 package com.example.ip_checker
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Main(viewmodel: ip_viewmodel){
+fun Main(viewmodel: ip_viewmodel) {
     val current_screen_state = viewmodel.state.value
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {Text("IP RECOGNIZER")}
+                title = { Text("IP RECOGNIZER") }
             )
         }
     ) { paddingValues ->
-
-        when(current_screen_state){
-            is states.Error -> Error(current_screen_state.message)
-            is states.Loading -> LoadingScreen()
-            is states.Success -> {
+        when (current_screen_state) {
+            is states.Home -> {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 20.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Text("Your IP Address is:")
-                    Spacer(Modifier.height(10.dp))
-                    Text(current_screen_state.ip.ip, fontWeight = FontWeight.Bold, fontSize = 25.sp)
-
-
+                    Button(
+                        shape = RoundedCornerShape(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Blue
+                        ),
+                        onClick = { viewmodel.get_ip() }
+                    ) {
+                        Text("FETCH IP ADDRESS", color = Color.White)
+                    }
                 }
             }
+
+            is states.Error -> Error(current_screen_state.message)
+            is states.Loading -> LoadingScreen()
+
+            is states.Success -> {
+                SuccessScreen(
+                    state = current_screen_state,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
         }
-
-
-
     }
 }
 
 @Composable
-fun LoadingScreen(){
+fun SuccessScreen(state: states.Success, modifier: Modifier) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
+            .padding(horizontal = 20.dp)
+    ) {
+        Spacer(Modifier.height(10.dp))
+        Text("Your IP Address is:")
+        Spacer(Modifier.height(20.dp))
+        Text(
+            text = state.ip.ip,
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
         LinearProgressIndicator()
         Spacer(Modifier.height(5.dp))
@@ -78,29 +90,19 @@ fun LoadingScreen(){
 }
 
 @Composable
-fun Error(message:String){
+fun Error(message: String) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 15.dp, end = 15.dp)
+        Text(message)
+        Spacer(Modifier.height(10.dp))
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(10.dp)
         ) {
-            Text(message,
-                modifier = Modifier)
-            Spacer(Modifier.height(10.dp))
-
-            Button(
-                onClick = {}
-                , shape = RoundedCornerShape(10.dp)
-            ) {
-                Text("Retry", fontWeight = FontWeight.Bold)
-            }
+            Text("Retry", fontWeight = FontWeight.Bold)
         }
     }
-
 }
